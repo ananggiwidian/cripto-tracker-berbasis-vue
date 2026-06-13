@@ -1,52 +1,42 @@
 <template>
   <ion-page>
-
     <ion-content class="bg-gray-300">
 
-      <!-- BUTTON -->
+      <!-- Refresh button -->
       <div class="flex justify-center mt-5">
-
         <button
           @click="getCrypto"
           class="bg-blue-600 text-white px-6 py-2 rounded-md shadow-md"
         >
           Refresh
         </button>
-
       </div>
 
-      <!-- LAST UPDATE -->
+      <!-- Update time -->
       <p class="text-center mt-2 text-sm text-gray-700">
         Last Update: {{ lastUpdate }}
       </p>
 
-      <!-- LIST -->
+      <!-- Crypto list -->
       <div class="p-4">
-
         <div
           v-for="crypto in cryptos"
           :key="crypto.id"
           class="bg-yellow-100 border border-yellow-300 p-3 mb-2"
         >
-
           <div class="flex justify-between items-center">
 
-            <!-- RANK -->
+            <!-- Rank -->
             <div>
-
-              <p class="text-xs">
-                Rank
-              </p>
+              <p class="text-xs">Rank</p>
 
               <h1 class="text-3xl font-light">
                 {{ crypto.rank }}
               </h1>
-
             </div>
 
-            <!-- NAME + SYMBOL -->
+            <!-- Name -->
             <div class="flex-1 ml-4">
-
               <p class="text-xs">
                 {{ crypto.name }}
               </p>
@@ -54,30 +44,22 @@
               <h2 class="text-3xl font-bold">
                 {{ crypto.symbol }}
               </h2>
-
             </div>
 
-            <!-- PRICE -->
+            <!-- Price -->
             <div>
-
-              <p class="text-xs">
-                USD
-              </p>
+              <p class="text-xs">USD</p>
 
               <h2 class="text-2xl">
                 {{ crypto.price_usd }}
               </h2>
-
             </div>
 
           </div>
-
         </div>
-
       </div>
 
     </ion-content>
-
   </ion-page>
 </template>
 
@@ -99,32 +81,25 @@ interface Crypto {
 }
 
 const cryptos = ref<Crypto[]>([])
-
 const lastUpdate = ref('')
 
+// Fetch crypto data
 const getCrypto = async () => {
-
   try {
-
     const response = await axios.get(
       'https://api.coinlore.net/api/tickers/'
     )
 
     cryptos.value = response.data.data.slice(0, 7)
-
     lastUpdate.value = new Date().toLocaleTimeString()
 
   } catch (error) {
-
     console.log(error)
-
   }
-
 }
 
+// Initial load
 onMounted(() => {
-
   getCrypto()
-
 })
 </script>
