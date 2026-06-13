@@ -1,56 +1,130 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-title>Blank</ion-title>
-      </ion-toolbar>
-    </ion-header>
 
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Blank</ion-title>
-        </ion-toolbar>
-      </ion-header>
+    <ion-content class="bg-gray-300">
 
-      <div id="container">
-        <strong>Ready to create an app?</strong>
-        <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+      <!-- BUTTON -->
+      <div class="flex justify-center mt-5">
+
+        <button
+          @click="getCrypto"
+          class="bg-blue-600 text-white px-6 py-2 rounded-md shadow-md"
+        >
+          Refresh
+        </button>
+
       </div>
+
+      <!-- LAST UPDATE -->
+      <p class="text-center mt-2 text-sm text-gray-700">
+        Last Update: {{ lastUpdate }}
+      </p>
+
+      <!-- LIST -->
+      <div class="p-4">
+
+        <div
+          v-for="crypto in cryptos"
+          :key="crypto.id"
+          class="bg-yellow-100 border border-yellow-300 p-3 mb-2"
+        >
+
+          <div class="flex justify-between items-center">
+
+            <!-- RANK -->
+            <div>
+
+              <p class="text-xs">
+                Rank
+              </p>
+
+              <h1 class="text-3xl font-light">
+                {{ crypto.rank }}
+              </h1>
+
+            </div>
+
+            <!-- NAME + SYMBOL -->
+            <div class="flex-1 ml-4">
+
+              <p class="text-xs">
+                {{ crypto.name }}
+              </p>
+
+              <h2 class="text-3xl font-bold">
+                {{ crypto.symbol }}
+              </h2>
+
+            </div>
+
+            <!-- PRICE -->
+            <div>
+
+              <p class="text-xs">
+                USD
+              </p>
+
+              <h2 class="text-2xl">
+                {{ crypto.price_usd }}
+              </h2>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
     </ion-content>
+
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import {
+  IonContent,
+  IonPage
+} from '@ionic/vue'
+
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
+interface Crypto {
+  id: string
+  rank: number
+  name: string
+  symbol: string
+  price_usd: string
+}
+
+const cryptos = ref<Crypto[]>([])
+
+const lastUpdate = ref('')
+
+const getCrypto = async () => {
+
+  try {
+
+    const response = await axios.get(
+      'https://api.coinlore.net/api/tickers/'
+    )
+
+    cryptos.value = response.data.data.slice(0, 7)
+
+    lastUpdate.value = new Date().toLocaleTimeString()
+
+  } catch (error) {
+
+    console.log(error)
+
+  }
+
+}
+
+onMounted(() => {
+
+  getCrypto()
+
+})
 </script>
-
-<style scoped>
-#container {
-  text-align: center;
-  
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-  
-  color: #8c8c8c;
-  
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
-}
-</style>
